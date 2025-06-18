@@ -4,6 +4,7 @@
 nextflow.enable.dsl = 2
 
 params.image_type = "cytaimage"
+params.create_bam = true
 
 process count {
     // Load the appropriate dependencies

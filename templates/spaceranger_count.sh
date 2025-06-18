@@ -18,6 +18,7 @@ spaceranger count \
     --fastqs fastqs \
     --${params.image_type}=${image} \
     --probe-set=probes.csv \
+    --create-bam=${params.create_bam} \
     --localcores=${task.cpus} \
     --localmem=${task.memory.toGiga()} \
     \$ARG \
