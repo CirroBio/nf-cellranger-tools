@@ -5,18 +5,19 @@ set -e
 # The user can specify the version of CellRanger which is run
 VERSION="${params.cellranger_version}"
 echo "Using CellRanger Version \$VERSION"
+MAJOR_VERSION="\${VERSION%%.*}"
 
 # For older versions of CellRanger, the --include-introns flag should be
 # entirely omitted to set it as false. Only use the flag if it should be
 # set to true, or if the version is >=7.0.0
-if [ "${params.include_introns}" == "true" ] || [ \${VERSION:0:1}  == "7" ]; then
-    FLAG="--include-introns=${params.include_introns}"
+if [ "${params.include_introns}" == "true" ] || (( MAJOR_VERSION >= 7 )); then
+    INTRONS_FLAG="--include-introns=${params.include_introns}"
 else
-    FLAG=""
+    INTRONS_FLAG=""
 fi
 
 # If running v8 or higher, add the --create-bam=true flag
-if [[ "${params.cellranger_version}" =~ ^8.* ]]; then
+if (( MAJOR_VERSION >= 8 )); then
     BAM_FLAG="--create-bam=true"
 else
     BAM_FLAG=""
@@ -30,7 +31,7 @@ cellranger count \
             --sample=${sample} \
             --localcores=${task.cpus} \
             --localmem=${task.memory.toGiga()} \
-            \$FLAG \
+            \${INTRONS_FLAG} \
             \${BAM_FLAG} \
     2>&1 | tee -a ${sample}.log.txt
 
