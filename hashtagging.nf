@@ -187,6 +187,10 @@ workflow {
             params.fastq_dir.tokenize(",").collect { dir -> "${dir}/**.fastq.gz" }
         )
         .toSortedList()
+        .map { files ->
+            if (files.size() == 0) { error "No FASTQ files found in: ${params.fastq_dir}" }
+            files
+        }
 
     // Point to the reference transcriptome
     transcriptome_dir = file(

@@ -61,13 +61,16 @@ workflow {
     // Get the sample list either from the sample_whitelist or the fastq_dir
     sample_list()
 
-    // Point to the FASTQ directory
-    fastq_dir = file(
-        "${params.fastq_dir}",
-        checkIfExists: true,
-        type: "dir",
-        glob: false
-    )
+    // Build a channel of all FASTQ files from the comma-delimited list of directories
+    fastq_dir = channel
+        .fromPath(
+            params.fastq_dir.tokenize(",").collect { dir -> "${dir}/**.fastq.gz" }
+        )
+        .toSortedList()
+        .map { files ->
+            if (files.size() == 0) { error "No FASTQ files found in: ${params.fastq_dir}" }
+            files
+        }
 
     // Point to the reference vdj
     ref_dir = file(

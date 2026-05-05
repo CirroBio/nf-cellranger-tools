@@ -25,6 +25,8 @@ def list_files(folder_path){
 
 workflow sample_list {
 
+    main:
+
     // If the user supplied a sample whitelist
     if("${params.sample_whitelist}" != "false"){
     
@@ -66,6 +68,9 @@ workflow sample_list {
 }
 
 workflow parse_samplesheet {
+
+    main:
+
     // Parse the set of files provided by the user from a samplesheet
     Channel
         .fromPath(
