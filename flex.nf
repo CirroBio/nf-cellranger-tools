@@ -39,7 +39,7 @@ process cellranger_flex {
     // The run configuration is driven by a multi config CSV
     path "config.csv"
     // Stage the FASTQ folder (by symlink) in the working directory
-    path "FASTQ_DIR"
+    path "FASTQ_DIR/"
     // Stage the reference transcriptome (by symlink) in the working directory
     path "GEX_REF"
     // Stage the probe set CSV reference file
