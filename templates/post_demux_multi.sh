@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -e
+# pipefail so a cellranger failure is not masked by the exit code of `tee`
+set -eo pipefail
 
 echo "Resolving relative links in post_demux.config.csv"
 resolve_links.py "post_demux.config.csv"
