@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -e
+# pipefail so a cellranger failure is not masked by the exit code of `tee`
+set -eo pipefail
 
 # Parse the sample name from the CSV
 CSV="demux.config.csv"

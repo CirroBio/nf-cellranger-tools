@@ -42,8 +42,10 @@ process demux_hashtags {
     input:
     // The run configuration for demultiplexing is driven by a multi config CSV
     path "demux.config.csv"
-    // Stage the FASTQ folder (by symlink) in the working directory
-    path "FASTQ_DIR"
+    // Stage the FASTQ files into a folder named FASTQ_DIR in the working directory.
+    // The trailing /* collects the list of FASTQ files into a directory (keeping
+    // their original names) so cellranger's fastqs=FASTQ_DIR resolves to a folder.
+    path "FASTQ_DIR/*"
     // Stage the reference transcriptome (by symlink) in the working directory
     path "GEX_REF"
     // The hashtags CSV
@@ -110,8 +112,10 @@ process post_demux_multi {
     path "post_demux.config.csv"
     // The FASTQ files for each sample
     tuple val(sample_name), path("DEMUX_DIR")
-    // Stage the FASTQ folder (by symlink) in the working directory
-    path "FASTQ_DIR"
+    // Stage the FASTQ files into a folder named FASTQ_DIR in the working directory.
+    // The trailing /* collects the list of FASTQ files into a directory (keeping
+    // their original names) so cellranger's fastqs=FASTQ_DIR resolves to a folder.
+    path "FASTQ_DIR/*"
     // Stage the reference transcriptome (by symlink) in the working directory
     path "GEX_REF"
     // Stage the reference V(D)J (by symlink) in the working directory
