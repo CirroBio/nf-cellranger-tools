@@ -42,6 +42,19 @@ if [ -d "demultiplexed_samples" ]; then
     for sample in demultiplexed_samples/per_sample_outs/*; do
         BAM=\$sample/count/sample_alignments.bam
         if [ -s "\$BAM" ]; then
+
+            # Samples with no cells called yield a header-only BAM, which
+            # bamtofastq produces no output for. Leave those BAMs in
+            # per_sample_outs/ so they are not picked up downstream.
+            RC=0
+            bam_has_alignments.py "\$BAM" || RC=\$?
+            if [ "\$RC" -eq 1 ]; then
+                echo Skipping \${sample##*/} - no aligned reads in \$BAM | tee -a "demultiplexed_samples.log.txt"
+                continue
+            elif [ "\$RC" -ne 0 ]; then
+                exit "\$RC"
+            fi
+
             DEST=demultiplexed_samples/\${sample##*/}.bam
             echo Moving BAM file from \$sample/count/sample_alignments.bam to \$DEST | tee -a "demultiplexed_samples.log.txt"
             mv "\$BAM" "\$DEST"
