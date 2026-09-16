@@ -114,7 +114,7 @@ class Config:
             self.config.append("check-library-compatibility,false")
 
         self.config.append("include-introns,${params.include_introns}")
-        if int("${params.cellranger_version}"[0]) > 7:
+        if int("${params.cellranger_version}".split(".")[0]) > 7:
             self.config.append("create-bam,true")
 
     def add_vdj_ref(self):
