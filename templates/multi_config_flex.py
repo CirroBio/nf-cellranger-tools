@@ -57,7 +57,7 @@ class Config:
                 "probe-set,cellranger_probe_set.csv"
             ])
         )
-        if int("${params.cellranger_version}"[0]) > 7:
+        if int("${params.cellranger_version}".split(".")[0]) > 7:
             self.config.append("create-bam,true")
 
     def add_samples(self, sample_list):
