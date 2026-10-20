@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eo pipefail
 
 # Parse the sample name from the CSV
 CSV="${multi_config}"

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eo pipefail
 
 # Set up the libraries CSV file, assuming that the inputs are in
 # two different folders

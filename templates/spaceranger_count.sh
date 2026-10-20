@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eo pipefail
 
 echo "slide=${slide}" | tee -a spaceranger_count.log.txt
 echo "area=${area}" | tee -a spaceranger_count.log.txt

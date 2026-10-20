@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eo pipefail
 
 # The user can specify the version of CellRanger which is run
 VERSION="${params.cellranger_version}"
