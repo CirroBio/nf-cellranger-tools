@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eo pipefail
 
 spaceranger mkref \
     --genome="${params.genome_name}" \
