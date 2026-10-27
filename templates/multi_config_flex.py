@@ -112,11 +112,11 @@ probe_barcodes = read_and_log(
     allowed_cols=["sample_id", "probe_barcode_ids"]
 )
 
-# Read in the samples CSV
-samples = read_and_log(
-    "samples.csv",
-    allowed_cols=["sample"]
-)
+# Read in the samples CSV. Cirro writes the full samplesheet here, including
+# any sample metadata columns; only the sample name is used.
+samples = read_and_log("samples.csv")
+msg = f"samples.csv must have a column named sample (found: {', '.join(samples.columns)})"
+assert "sample" in samples.columns, msg
 
 # Create the output folder
 os.mkdir("configs")
