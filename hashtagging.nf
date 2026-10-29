@@ -148,6 +148,8 @@ workflow {
         probes_csv:         ${params.probes_csv}
         dryrun:             ${params.dryrun}
         cellranger_version: ${params.cellranger_version}
+        emptydrops_minimum_umis: ${params.emptydrops_minimum_umis}
+        global_minimum_umis: ${params.global_minimum_umis}
     """
 
     // Check that the user specified the output parameter

@@ -60,6 +60,19 @@ class Config:
         if int("${params.cellranger_version}".split(".")[0]) > 7:
             self.config.append("create-bam,true")
 
+        # CellRanger rejects emptydrops-minimum-umis before 7.1 and
+        # global-minimum-umis before 8.0
+        cellranger_version = tuple(int(n) for n in "${params.cellranger_version}".split(".")[:2])
+        for key, value, min_version in [
+            ("emptydrops-minimum-umis", "${params.emptydrops_minimum_umis}", (7, 1)),
+            ("global-minimum-umis", "${params.global_minimum_umis}", (8, 0))
+        ]:
+            if value == "false":
+                continue
+            msg = f"{key} requires CellRanger {min_version[0]}.{min_version[1]} or later (selected: ${params.cellranger_version})"
+            assert cellranger_version >= min_version, msg
+            self.config.append(f"{key},{value}")
+
     def add_samples(self, sample_list):
         self.add_section(
             "libraries",
