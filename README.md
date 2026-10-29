@@ -128,9 +128,13 @@ library with the `feature_types` annotated as `Multiplexing Capture`, e.g.
   - `vdj_dir`: Directory containing VDJ reference files
   - `multiplexing`: Path to multiplexing capture table (optional)
   - `feature_csv`: Feature Reference CSV used for either Antibody Capture or CRISPR Guide Capture (optional)
+  - `emptydrops_minimum_umis`: Barcodes with fewer UMIs than this are not considered in the second (EmptyDrops) step of cell calling (optional, CellRanger default: 500, requires CellRanger 7.1 or later)
+  - `global_minimum_umis`: Barcodes with fewer UMIs than this are not called as cells (optional, CellRanger default: 0, requires CellRanger 8.0 or later)
 
 > Note that both `transcriptome_dir` and `vdj_dir` must always be specified, although the contents
 > will only be accessed if the corresponding sample type is provided
+
+The `flex` and `hashtagging` workflows also accept `emptydrops_minimum_umis` and `global_minimum_umis`.
 
 ## Resource Allocation
 
