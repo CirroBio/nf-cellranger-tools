@@ -79,7 +79,14 @@ workflow {
                 it.fastq_type,
                 file(it.fastq_2, checkIfExists: true)
             ]
-        ]}
+        ] + (
+            // ATAC libraries have a third read (R3); the column is optional
+            it.fastq_3 ? [[
+                it.sample,
+                it.fastq_type,
+                file(it.fastq_3, checkIfExists: true)
+            ]] : []
+        )}
         .groupTuple(by:[0, 1], sort: true)
         .branch {
             gex: it[1] == "gex"
