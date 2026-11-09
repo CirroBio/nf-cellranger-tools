@@ -42,8 +42,10 @@ process cellranger_multi {
     input:
     // The run configuration is driven by a multi config CSV
     path multi_config
-    // Stage the FASTQ folder (by symlink) in the working directory
-    path "FASTQ_DIR"
+    // Stage the FASTQ files into a folder named FASTQ_DIR in the working directory.
+    // The trailing /* collects the list of FASTQ files into a directory (keeping
+    // their original names) so cellranger's fastqs=FASTQ_DIR resolves to a folder.
+    path "FASTQ_DIR/*"
     // Stage the reference transcriptome (by symlink) in the working directory
     path "GEX_REF"
     // Stage the reference V(D)J (by symlink) in the working directory
