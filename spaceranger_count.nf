@@ -14,7 +14,7 @@ process count {
 
     input:
     tuple val(sample_name), path("fastqs/"), path(image), val(slide), val(area)
-    path "ref/"
+    path "ref"
     path "probes.csv"
 
     output:
