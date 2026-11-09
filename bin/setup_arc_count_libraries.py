@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
+import csv
 from typing import List
-import pandas as pd
 from pathlib import Path
 
 
@@ -42,16 +42,17 @@ def remove_end_options(file_name: str, endings: List[str]) -> str:
     assert False, msg
 
 
-(
-    pd.DataFrame([
-        row
-        for folder, library_type in [
-            ("GEX_FASTQS", "Gene Expression"),
-            ("ATAC_FASTQS", "Chromatin Accessibility")
-        ]
-        for row in parse_samples(folder, library_type)
-    ])
-    .reindex(columns=["fastqs", "sample", "library_type"])
-    .drop_duplicates()
-    .to_csv("libraries.csv", index=False)
-)
+# The cellranger-arc container's pandas is built against a different numpy and fails to import
+rows = {
+    (row["fastqs"], row["sample"], row["library_type"]): row
+    for folder, library_type in [
+        ("GEX_FASTQS", "Gene Expression"),
+        ("ATAC_FASTQS", "Chromatin Accessibility")
+    ]
+    for row in parse_samples(folder, library_type)
+}
+
+with open("libraries.csv", "w", newline="") as handle:
+    writer = csv.DictWriter(handle, fieldnames=["fastqs", "sample", "library_type"], lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(rows.values())
