@@ -2,6 +2,7 @@
 
 import gzip
 import logging
+import sys
 from pathlib import Path
 from typing import Dict
 import pandas
@@ -44,13 +45,6 @@ def format_gtf_line(header, seq):
         "+",
         ".",
         f'gene_id "{header}"; transcript_id "{header}"; gene_name "{header}"; gene_biotype "protein_coding"'
-    ])
-
-
-def format_probes(recs: Dict[str, str]):
-    return "\n".join([
-        f"{header},{seq},{header},TRUE"
-        for header, seq in recs.items()
     ])
 
 
@@ -97,6 +91,45 @@ def append(file_in, file_out, footer):
             handle_out.write(footer)
 
 
+def merge_probes(file_in, file_out, recs: Dict[str, str], genome_name: str):
+    """Add each custom sequence to the probe set as the probe for its own gene.
+
+    The rows follow the probe set's header, as Space Ranger rejects a row with fewer
+    columns. Each custom gene is a single exon, so its probe does not span a splice
+    junction ("unspliced"). Space Ranger also requires every probe to be as long as
+    the others, and #reference_genome to name the genome mkref builds (CG000621).
+    """
+
+    with open(file_in, "r") as handle_in:
+        lines = [line.rstrip("\n") for line in handle_in if line.strip()]
+
+    rows = [line for line in lines if not line.startswith("#")]
+    columns = rows[0].split(",")
+    probe_length = len(rows[1].split(",")[columns.index("probe_seq")])
+
+    wrong_length = [header for header, seq in recs.items() if len(seq) != probe_length]
+    if wrong_length:
+        raise ValueError(
+            f"Custom sequences must be {probe_length} bp, the length of every probe "
+            f"in {file_in}: {', '.join(wrong_length)}"
+        )
+
+    with open(file_out, "w") as handle_out:
+        for line in lines:
+            if line.startswith("#reference_genome="):
+                line = f"#reference_genome={genome_name}"
+            handle_out.write(line + "\n")
+        for header, seq in recs.items():
+            values = dict(
+                gene_id=header,
+                probe_seq=seq,
+                probe_id=header,
+                included="TRUE",
+                region="unspliced"
+            )
+            handle_out.write(",".join(values[column] for column in columns) + "\n")
+
+
 def main():
     custom = read_custom()
 
@@ -112,10 +145,11 @@ def main():
         format_gtf(custom)
     )
 
-    append(
+    merge_probes(
         "input.csv",
         "probes.csv",
-        format_probes(custom)
+        custom,
+        sys.argv[1]
     )
 
 

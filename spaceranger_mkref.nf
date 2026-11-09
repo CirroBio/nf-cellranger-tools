@@ -19,7 +19,7 @@ process merge {
 
     """#!/bin/bash
 set -e
-spaceranger_merge.py
+spaceranger_merge.py "${params.genome_name}"
 """
 
 }
