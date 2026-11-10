@@ -10,15 +10,18 @@ process count {
     // Load the appropriate dependencies
     label "spaceranger"
 
-    publishDir "${params.output}", mode: 'copy', overwrite: true, pattern: "${sample_name}*"
+    publishDir "${params.output}", mode: 'copy', overwrite: true
 
     input:
     tuple val(sample_name), path("fastqs/"), path(image), val(slide), val(area)
     path "ref"
     path "probes.csv"
 
+    // Only outs/ from the pipestance: the rest is Martian's stage tree, whose
+    // symlinked join folders copy mode resolves into extra copies of the BAM
     output:
-    path "*"
+    path "${sample_name}/outs"
+    path "${sample_name}.log.txt"
 
     script:
     template "spaceranger_count.sh"
