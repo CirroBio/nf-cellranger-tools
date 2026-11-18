@@ -36,8 +36,10 @@ process cellranger_multi {
     // Load the appropriate dependencies
     label "cellranger"
     
-    // Copy all output files to the folder specified by the user with --output
-    publishDir "${params.output}/", mode: 'copy', overwrite: true
+    // Copy all output files to the folder specified by the user with --output,
+    // except FASTQ_DIR: "*" matches the folder the input FASTQs are staged in,
+    // and copy mode would publish a copy of every input FASTQ
+    publishDir "${params.output}/", mode: 'copy', overwrite: true, saveAs: { name -> name == "FASTQ_DIR" ? null : name }
     
     input:
     // The run configuration is driven by a multi config CSV
